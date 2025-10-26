@@ -1,0 +1,49 @@
+#cloud-config
+hostname: ${hostname}
+fqdn: ${hostname}.internal.cloudapp.net
+manage_etc_hosts: true
+
+# Update and upgrade packages
+package_update: true
+package_upgrade: true
+
+# Install packages
+packages:
+  - curl
+  - wget
+  - git
+  - htop
+  - vim
+  - net-tools
+  - jq
+
+# Configure automatic security updates
+apt:
+  sources:
+    unattended-upgrades:
+      source: "deb http://archive.ubuntu.com/ubuntu $RELEASE-updates main"
+
+# Enable automatic security updates
+runcmd:
+  - apt-get install -y unattended-upgrades
+  - dpkg-reconfigure -plow unattended-upgrades
+  - systemctl enable unattended-upgrades
+  - systemctl start unattended-upgrades
+  
+  # Configure firewall
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw allow ssh
+  - ufw --force enable
+  
+  # System hardening
+  - echo "net.ipv4.tcp_syncookies=1" >> /etc/sysctl.conf
+  - echo "net.ipv4.conf.all.rp_filter=1" >> /etc/sysctl.conf
+  - echo "net.ipv4.conf.default.rp_filter=1" >> /etc/sysctl.conf
+  - sysctl -p
+
+# Configure timezone
+timezone: Europe/Warsaw
+
+# Final message
+final_message: "System initialization completed in $UPTIME seconds"
