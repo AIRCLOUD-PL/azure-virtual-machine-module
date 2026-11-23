@@ -48,8 +48,8 @@ resource "azurerm_network_interface" "main" {
     public_ip_address_id          = var.public_ip_address_id
   }
 
-  dns_servers                   = var.dns_servers
-  ip_forwarding_enabled         = var.enable_ip_forwarding
+  dns_servers                    = var.dns_servers
+  ip_forwarding_enabled          = var.enable_ip_forwarding
   accelerated_networking_enabled = var.enable_accelerated_networking
 
   tags = local.tags
